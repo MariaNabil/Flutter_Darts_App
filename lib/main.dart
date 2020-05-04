@@ -6,17 +6,6 @@ main() {
 }
 
 class MyApp extends StatelessWidget {
-  /*void _pushStartGame(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        // Add 20 lines from here...
-        builder: (BuildContext context) {
-          return savedSuggestionsPage(context);
-        },
-      ),
-    );
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(title: 'Welcome to Flutter', home: new HomeScreen());
