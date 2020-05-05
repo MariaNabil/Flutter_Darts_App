@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import './TakePicsScreen.dart';
-import './Alert.dart';
+import '../Alert.dart';
 
 Widget StartGamePage(BuildContext context) {
   String player1 = "";
