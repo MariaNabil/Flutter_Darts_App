@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './TakePicsScreen.dart';
 import '../Alert.dart';
+import './CaptureScreen.dart';
 
 Widget StartGamePage(BuildContext context) {
   String player1 = "";
@@ -121,7 +121,7 @@ Widget StartGamePage(BuildContext context) {
                     MaterialPageRoute<void>(
                       // Add 20 lines from here...
                       builder: (BuildContext context) {
-                        return TakePicsScreen(context, player1, player2);
+                        return TakePictureScreen(context, player1, player2);
                       },
                     ),
                   );
