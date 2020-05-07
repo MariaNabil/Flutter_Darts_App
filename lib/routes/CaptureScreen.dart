@@ -1,11 +1,15 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'TakePlayerShotPage.dart';
+import '../globals.dart' as globals;
 
 TextStyle _textStyle = TextStyle(fontSize: 20, color: Colors.white70);
 //File image = null;
 
-Widget TakePictureScreen(BuildContext context, String player1, String player2) {
+Widget TakePictureScreen(BuildContext context) {
   return MaterialApp(
     home: MyHomePage(),
   );
@@ -21,9 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-
-    ///image = await ImagePicker.pickImage(source: ImageSource.camera);
-
+    globals.emptyDartboardImage = image;
     setState(() {
       _image = image;
     });
@@ -68,7 +70,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.white60,
               ),
             ),
-            onPressed: _image == null ? null : () {}),
+            onPressed: _image == null
+                ? null
+                : () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        // Add 20 lines from here...
+                        builder: (BuildContext context) {
+                          return TakePlayerShotScreen(context);
+                        },
+                      ),
+                    );
+                  }),
       ),
     );
   }
@@ -91,8 +104,11 @@ class _MyHomePageState extends State<MyHomePage> {
       padding: const EdgeInsets.only(top: 50),
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage("assets/images/11.png"), fit: BoxFit.cover)),
+        image: AssetImage("assets/images/11.png"),
+        fit: BoxFit.cover,
+      )),
       child: Scaffold(
+        //backgroundColor: Colors.black.withAlpha(200),
         backgroundColor: Colors.transparent,
         body: Column(
           children: <Widget>[

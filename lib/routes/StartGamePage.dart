@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../Alert.dart';
 import './CaptureScreen.dart';
+import '../globals.dart' as globals;
 
 Widget StartGamePage(BuildContext context) {
-  String player1 = "";
-  String player2 = "";
-  int score = 501;
+  //String player1 = "";
+  //String player2 = "";
+  //globals.score = 501;
   final _biggerFont = const TextStyle(fontSize: 20.0, color: Colors.white70);
 
   Widget _inputText(String player) {
@@ -27,11 +28,22 @@ Widget StartGamePage(BuildContext context) {
             hintText: hint),
         onChanged: (text) {
           if (player == "Player 1 : ") {
-            player1 = text;
+            globals.player1 = text;
+            globals.player = globals.player1;
+            // globals.round = 1;
           } else if (player == "Player 2 : ") {
-            player2 = text;
+            globals.player2 = text;
           } else if (player == "Score    : ") {
-            score = int.parse(text);
+            print("TRY PARSE = " + int.tryParse(text).toString());
+            //if (int.tryParse(text, 501) == true) {
+            globals.score = int.tryParse(text);
+            if (globals.score == null) {
+              globals.score = 501;
+            }
+            print("SCORE = " + globals.score.toString());
+            globals.player1Score = globals.score;
+            globals.player2Score = globals.score;
+            // }
           }
         },
       ),
@@ -103,16 +115,20 @@ Widget StartGamePage(BuildContext context) {
                   ),
                 ),
                 onPressed: () {
-                  print(player1 + " " + player2 + " " + score.toString());
-                  if (player1 == '' || player1 == null) {
+                  print(globals.player1 +
+                      " " +
+                      globals.player2 +
+                      " " +
+                      globals.score.toString());
+                  if (globals.player1 == '' || globals.player1 == null) {
                     showAlertDialog(
                         context, "Player1 Name !", "Please Enter Player1 Name");
                     return;
-                  } else if (player2 == '' || player2 == null) {
+                  } else if (globals.player2 == '' || globals.player2 == null) {
                     showAlertDialog(
                         context, "Player2 Name !", "Please Enter Player2 Name");
                     return;
-                  } else if (score == null) {
+                  } else if (globals.score == null) {
                     //SHOW ALERT
                     showAlertDialog(context, "Score !", "Please Enter Score");
                     return;
@@ -121,7 +137,7 @@ Widget StartGamePage(BuildContext context) {
                     MaterialPageRoute<void>(
                       // Add 20 lines from here...
                       builder: (BuildContext context) {
-                        return TakePictureScreen(context, player1, player2);
+                        return TakePictureScreen(context);
                       },
                     ),
                   );
