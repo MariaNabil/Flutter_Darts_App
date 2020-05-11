@@ -2,10 +2,13 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_video_tutorial/routes/FinishGamePage.dart';
+import 'package:flutter_video_tutorial/routes/ShowImagePage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../globals.dart' as globals;
 import '../python.dart';
+import '../rest_api.dart';
 
 TextStyle _textStyle = TextStyle(fontSize: 20, color: Colors.white70);
 //File image = null;
@@ -35,6 +38,34 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   File _image;
 
+  Future pickImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    new_shot = await getScore(image);
+
+    if (globals.player == globals.player1) {
+      globals.player1Score -= new_shot;
+      total_score = globals.player1Score;
+    } else if (globals.player == globals.player2) {
+      globals.player2Score -= new_shot;
+      total_score = globals.player2Score;
+    }
+
+    if (globals.player1Score <= 0 || globals.player2Score <= 0) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+          // Add 20 lines from here...
+          builder: (BuildContext context) {
+            return FinishGameScreen(context);
+          },
+        ),
+      );
+    }
+    setState(() {
+      _image = image;
+    });
+  }
+
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     new_shot = getScore(image);
@@ -48,11 +79,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     if (globals.player1Score <= 0 || globals.player2Score <= 0) {
-      Navigator.of(context).push(
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
           // Add 20 lines from here...
           builder: (BuildContext context) {
-            return FinishGameScreen();
+            return FinishGameScreen(context);
           },
         ),
       );
@@ -64,22 +95,50 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _iconWidget() {
     return Expanded(
-      flex: 2,
-      child: IconButton(
-        icon: Icon(
-          _image == null ? Icons.add_a_photo : Icons.done,
-          color: Colors.white70,
-        ),
-        onPressed: () {
-          getImage();
-        },
-        iconSize: 100,
-        alignment: Alignment.bottomCenter,
-      ),
+      flex: _image == null ? 3 : 2,
+      child: _image == null
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    _image == null ? Icons.add_a_photo : Icons.done,
+                    color: Colors.white70,
+                  ),
+                  onPressed: () {
+                    getImage();
+                  },
+                  iconSize: 100,
+                  alignment: Alignment.bottomCenter,
+                ),
+                IconButton(
+                  icon: Icon(
+                    _image == null ? Icons.photo : Icons.done,
+                    color: Colors.white70,
+                  ),
+                  onPressed: () {
+                    pickImage();
+                  },
+                  iconSize: 100,
+                  alignment: Alignment.bottomCenter,
+                ),
+              ],
+            )
+          : IconButton(
+              /// padding: EdgeInsets.only(bottom: 30),
+              icon: Icon(
+                Icons.done,
+                color: Colors.white70,
+              ),
+              onPressed: null,
+              iconSize: 120,
+              alignment: Alignment.center,
+            ),
     );
   }
 
-  Widget _buttonWidget() {
+  Widget _nextButtonWidget() {
     return Opacity(
       opacity: _image == null ? 0.0 : 1.0,
       child: Container(
@@ -107,14 +166,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 : () {
                     globals.round += 1;
                     if (globals.round > 3) {
-                      globals.round = 0;
+                      globals.round = 1;
                       if (globals.player == globals.player1) {
                         globals.player = globals.player2;
                       } else {
                         globals.player = globals.player1;
                       }
                     }
-                    Navigator.of(context).push(
+                    Navigator.of(context).pushReplacement(
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) {
                           return TakePlayerShotScreen(context);
@@ -124,6 +183,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
       ),
     );
+  }
+
+  Widget _showImageButtonWidget1() {
+    Future<Widget> showImageBtnClicked() async {
+      bool isTrue = await ApiService.getOutputImage();
+      print('IsTrue');
+      print(isTrue.toString());
+
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          // Add 20 lines from here...
+          builder: (BuildContext context) {
+            return ShowImagePage(context, _image);
+          },
+        ),
+      );
+    }
+
+    return Opacity(
+        opacity: _image == null ? 0.0 : 1.0,
+        // child: Container(
+        child: IconButton(
+            icon: Icon(
+              Icons.remove_red_eye,
+              color: Colors.white70,
+            ),
+            iconSize: 50,
+            onPressed: showImageBtnClicked));
+    // );
   }
 
   Widget _textWidget(text1, text2) {
@@ -163,9 +251,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     globals.player,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white70,
+                      fontSize: 30,
+                    ),
                   ),
                 ),
                 Expanded(
@@ -173,22 +261,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     'Round : ' + globals.round.toString(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white70,
+                      fontSize: 30,
+                    ),
                   ),
                 ),
-
                 _iconWidget(),
-                _textWidget(
-                    'Take Payer1 Shot Photo', 'Image Taken Successfully'),
-
-                //Expanded(flex: 1, child: Container()),
-                _textWidget(
-                    'Previous Score : ' + previous_score.toString(), ''),
+                _textWidget('Take/Pick Shot Photo', 'Image Taken Successfully'),
+                _image == null
+                    ? _textWidget('Score : ' + previous_score.toString(), '')
+                    : _showImageButtonWidget1(),
                 _textWidget(
                     '', 'Previous Score : ' + previous_score.toString()),
-
+                _textWidget('', 'New Shot : ' + new_shot.toString()),
                 Container(
                   padding: EdgeInsets.only(left: 80, right: 80),
                   child: Opacity(
@@ -200,12 +285,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 _textWidget('', 'Total Score : ' + total_score.toString()),
+                //Expanded(flex: 1, child: Container()),
+                /*Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _showImageButtonWidget(),
+                    _nextButtonWidget(),
+                  ],
+                ),*/
+                // _showImageButtonWidget()
+                //Expanded(flex: 1, child: Container()),
 
-                Expanded(flex: 1, child: Container()),
-
-                _buttonWidget(),
+                _nextButtonWidget()
               ],
             ),
+            //floatingActionButton: FloatingActionButton(onPressed: null),
           )),
     );
   }

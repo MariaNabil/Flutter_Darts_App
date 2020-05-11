@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'TakePlayerShotPage.dart';
 import '../globals.dart' as globals;
+import '../rest_api.dart';
 
 TextStyle _textStyle = TextStyle(fontSize: 20, color: Colors.white70);
 //File image = null;
@@ -24,8 +25,24 @@ class _MyHomePageState extends State<MyHomePage> {
   File _image;
 
   Future getImage() async {
+    //var image1 = await ImagePicker.pickImage(source: ImageSource.gallery);
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     globals.emptyDartboardImage = image;
+    bool done = await ApiService.postEmptyDartBoard(image);
+    print('DONE');
+    print(done.toString());
+    setState(() {
+      _image = image;
+    });
+  }
+
+  Future pickImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    //var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    globals.emptyDartboardImage = image;
+    bool done = await ApiService.postEmptyDartBoard(image);
+    print('DONE');
+    print(done.toString());
     setState(() {
       _image = image;
     });
@@ -33,17 +50,45 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _iconWidget() {
     return Expanded(
-      flex: 1,
-      child: IconButton(
-        icon: Icon(
-          _image == null ? Icons.add_a_photo : Icons.done,
-          color: Colors.white70,
-        ),
-        onPressed: () {
-          getImage();
-        },
-        iconSize: 100,
-      ),
+      flex: 2,
+      child: _image == null
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    _image == null ? Icons.add_a_photo : Icons.done,
+                    color: Colors.white70,
+                  ),
+                  onPressed: () {
+                    getImage();
+                  },
+                  iconSize: 100,
+                  alignment: Alignment.bottomCenter,
+                ),
+                IconButton(
+                  icon: Icon(
+                    _image == null ? Icons.photo : Icons.done,
+                    color: Colors.white70,
+                  ),
+                  onPressed: () {
+                    pickImage();
+                  },
+                  iconSize: 100,
+                  alignment: Alignment.bottomCenter,
+                ),
+              ],
+            )
+          : IconButton(
+              icon: Icon(
+                Icons.done,
+                color: Colors.white70,
+              ),
+              onPressed: null,
+              iconSize: 100,
+              alignment: Alignment.bottomCenter,
+            ),
     );
   }
 
@@ -73,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: _image == null
                 ? null
                 : () {
-                    Navigator.of(context).push(
+                    Navigator.of(context).pushReplacement(
                       MaterialPageRoute<void>(
                         // Add 20 lines from here...
                         builder: (BuildContext context) {
@@ -117,6 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             _iconWidget(),
             _textWidget(),
+            // RaisedButton(child: Text('Pick'), onPressed: pickImage),
             Expanded(
                 flex: 4,
                 child: Container(

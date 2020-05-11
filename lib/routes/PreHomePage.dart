@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import './StartGamePage.dart';
+import './HomeScreen.dart';
+import '../globals.dart' as globals;
 
-class HomeScreen extends StatelessWidget {
+class PreHomeScreen extends StatelessWidget {
   @override
+  String ip = '192.168.1.';
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 100),
@@ -16,15 +18,37 @@ class HomeScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           centerTitle: true,
         ),
-        body: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        body: Column(
+          //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Container(
+              margin: EdgeInsets.all(50),
+              child: TextField(
+                style: TextStyle(color: Colors.white70, fontSize: 20),
+                controller: TextEditingController()..text = ip,
+                decoration: InputDecoration(
+                    hintStyle: TextStyle(fontSize: 20, color: Colors.white24),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    hintText: 'IP'),
+                onChanged: (text) {
+                  ip = text;
+                },
+              ),
+            ),
             RaisedButton(
                 padding: const EdgeInsets.only(
                     right: 40, left: 40, top: 20, bottom: 20),
                 color: Colors.transparent,
                 child: Text(
-                  'START GAME',
+                  'START',
                   style: TextStyle(
                       fontSize: 20,
                       color: Colors.white70,
@@ -38,11 +62,12 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
+                  globals.ip = ip;
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute<void>(
                       // Add 20 lines from here...
                       builder: (BuildContext context) {
-                        return StartGamePage(context);
+                        return HomeScreen();
                       },
                     ),
                   );

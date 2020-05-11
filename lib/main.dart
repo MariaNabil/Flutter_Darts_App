@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_video_tutorial/routes/PreHomePage.dart';
 import './routes/HomeScreen.dart';
 
 main() {
@@ -8,6 +9,6 @@ main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Welcome to Flutter', home: new HomeScreen());
+    return MaterialApp(title: 'Welcome to Flutter', home: new PreHomeScreen());
   }
 }

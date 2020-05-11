@@ -133,7 +133,7 @@ Widget StartGamePage(BuildContext context) {
                     showAlertDialog(context, "Score !", "Please Enter Score");
                     return;
                   }
-                  Navigator.of(context).push(
+                  Navigator.of(context).pushReplacement(
                     MaterialPageRoute<void>(
                       // Add 20 lines from here...
                       builder: (BuildContext context) {
