@@ -19,7 +19,6 @@ class PreHomeScreen extends StatelessWidget {
           centerTitle: true,
         ),
         body: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(50),
@@ -65,7 +64,6 @@ class PreHomeScreen extends StatelessWidget {
                   globals.ip = ip;
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute<void>(
-                      // Add 20 lines from here...
                       builder: (BuildContext context) {
                         return HomeScreen();
                       },

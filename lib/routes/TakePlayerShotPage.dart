@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_tutorial/routes/FinishGamePage.dart';
 import 'package:flutter_video_tutorial/routes/ShowImagePage.dart';
 import 'package:image_picker/image_picker.dart';
+import '../Alert.dart';
 import '../globals.dart' as globals;
 import '../python.dart';
 import '../rest_api.dart';
@@ -45,6 +46,12 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isLoading = false;
     });
+    if (new_shot == -1) {
+      await showAlertDialog(context, "Error", "Please Try Again");
+      _image = null;
+      return;
+    }
+
     if (globals.player == globals.player1) {
       globals.player1Score -= new_shot;
       total_score = globals.player1Score;
@@ -56,7 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
     if (globals.player1Score <= 0 || globals.player2Score <= 0) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
-          // Add 20 lines from here...
           builder: (BuildContext context) {
             return FinishGameScreen(context);
           },
@@ -77,6 +83,12 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _isLoading = false;
     });
+    if (new_shot == -1) {
+      await showAlertDialog(context, "Error", "Please Try Again");
+      _image = null;
+      return;
+    }
+
     if (globals.player == globals.player1) {
       globals.player1Score -= new_shot;
       total_score = globals.player1Score;
@@ -88,7 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
     if (globals.player1Score <= 0 || globals.player2Score <= 0) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute<void>(
-          // Add 20 lines from here...
           builder: (BuildContext context) {
             return FinishGameScreen(context);
           },
@@ -133,7 +144,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             )
           : IconButton(
-              /// padding: EdgeInsets.only(bottom: 30),
               icon: Icon(
                 Icons.done,
                 color: Colors.white70,
@@ -289,7 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
               floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.remove_red_eye),
                 backgroundColor: Colors.transparent,
-                onPressed: showImageBtnClicked,
+                onPressed: _image == null ? null : showImageBtnClicked,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                     side: BorderSide(color: Colors.white)),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../globals.dart' as globals;
 import 'StartGamePage.dart';
 
-//then hanzawed button new game w hanemsa7 fih kol el globals
 Widget FinishGameScreen(BuildContext context) {
   return Container(
       padding: const EdgeInsets.only(top: 20),
@@ -25,14 +24,6 @@ Widget FinishGameScreen(BuildContext context) {
           body: Container(
             margin: EdgeInsets.only(bottom: 50),
             child: Align(
-              // child: Column(
-              //   //mainAxisAlignment: MainAxisAlignment.center,
-              //   crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: <Widget>[
-              // Text(
-              //   'The Winner is : ' + globals.player,
-              //   style: TextStyle(fontSize: 30, color: Colors.black),
-              // ),
               alignment: FractionalOffset.bottomCenter,
               child: RaisedButton(
                   padding: const EdgeInsets.only(
@@ -60,19 +51,14 @@ Widget FinishGameScreen(BuildContext context) {
                     globals.player1Score = globals.score;
                     globals.player2Score = globals.score;
                     globals.round = 1;
-                    //globals.player=
-
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute<void>(
-                        // Add 20 lines from here...
                         builder: (BuildContext context) {
                           return StartGamePage(context);
                         },
                       ),
                     );
                   }),
-              // ],
-              //),
             ),
           )));
 }

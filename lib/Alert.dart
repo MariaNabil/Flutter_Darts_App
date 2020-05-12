@@ -5,7 +5,7 @@ showAlertDialog(BuildContext context, String title, String message) {
   Widget okButton = FlatButton(
     child: Text("OK"),
     onPressed: () {
-      Navigator.pop(context);
+      Navigator.of(context, rootNavigator: true).pop(false);
     },
   );
 

@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import '../globals.dart' as globals;
 
 Widget ShowImagePage(BuildContext context, _image) {
-  //final _biggerFont = const TextStyle(fontSize: 20.0, color: Colors.white70);
   void goBack() {
     Navigator.of(context).pop();
   }
@@ -21,8 +20,6 @@ Widget ShowImagePage(BuildContext context, _image) {
       'outputImage.jpg',
     );
   }
-
-  //Image.file(),
 
   return MaterialApp(
     theme: ThemeData.dark(),

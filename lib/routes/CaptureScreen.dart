@@ -2,13 +2,12 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import '../Alert.dart';
 import 'TakePlayerShotPage.dart';
 import '../globals.dart' as globals;
 import '../rest_api.dart';
 
 TextStyle _textStyle = TextStyle(fontSize: 20, color: Colors.white70);
-//File image = null;
 
 Widget TakePictureScreen(BuildContext context) {
   return MaterialApp(
@@ -26,7 +25,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isLoading = false;
 
   Future getImage() async {
-    //var image1 = await ImagePicker.pickImage(source: ImageSource.gallery);
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     globals.emptyDartboardImage = image;
     setState(() {
@@ -34,10 +32,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     bool done = await ApiService.postEmptyDartBoard(image);
     setState(() {
-      _isLoading = true;
+      _isLoading = false;
     });
+    if (done == false) {
+      await showAlertDialog(context, "Error", "Please Try Again");
+      _image = null;
+      return;
+    }
     print('DONE');
     print(done.toString());
+
     setState(() {
       _image = image;
     });
@@ -55,6 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     print('DONE');
     print(done.toString());
+    if (done == false) {
+      await showAlertDialog(context, "Error", "Please Try Again");
+      _image = null;
+      return;
+    }
     setState(() {
       _image = image;
     });
@@ -132,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 : () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute<void>(
-                        // Add 20 lines from here...
                         builder: (BuildContext context) {
                           return TakePlayerShotScreen(context);
                         },
@@ -165,7 +173,6 @@ class _MyHomePageState extends State<MyHomePage> {
         fit: BoxFit.cover,
       )),
       child: Scaffold(
-        //backgroundColor: Colors.black.withAlpha(200),
         backgroundColor: Colors.transparent,
         body: Column(
           children: <Widget>[
@@ -178,7 +185,6 @@ class _MyHomePageState extends State<MyHomePage> {
               opacity: _isLoading ? 1.0 : 0,
               child: CircularProgressIndicator(),
             ),
-            // RaisedButton(child: Text('Pick'), onPressed: pickImage),
             Expanded(
                 flex: 4,
                 child: Container(
