@@ -4,14 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_video_tutorial/routes/FinishGamePage.dart';
 import 'package:flutter_video_tutorial/routes/ShowImagePage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-
 import '../globals.dart' as globals;
 import '../python.dart';
 import '../rest_api.dart';
 
 TextStyle _textStyle = TextStyle(fontSize: 20, color: Colors.white70);
-//File image = null;
 int new_shot = 0;
 int previous_score = 0;
 int total_score = 0;
@@ -37,12 +34,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File _image;
+  bool _isLoading = false;
 
   Future pickImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
+    setState(() {
+      _isLoading = true;
+    });
     new_shot = await getScore(image);
-
+    setState(() {
+      _isLoading = false;
+    });
     if (globals.player == globals.player1) {
       globals.player1Score -= new_shot;
       total_score = globals.player1Score;
@@ -68,8 +70,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      _isLoading = true;
+    });
     new_shot = getScore(image);
-
+    setState(() {
+      _isLoading = false;
+    });
     if (globals.player == globals.player1) {
       globals.player1Score -= new_shot;
       total_score = globals.player1Score;
@@ -95,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _iconWidget() {
     return Expanded(
-      flex: _image == null ? 3 : 2,
+      flex: _image == null ? 3 : 1,
       child: _image == null
           ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -110,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     getImage();
                   },
                   iconSize: 100,
-                  alignment: Alignment.bottomCenter,
+                  alignment: Alignment.topCenter,
                 ),
                 IconButton(
                   icon: Icon(
@@ -130,6 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: Icon(
                 Icons.done,
                 color: Colors.white70,
+                semanticLabel: 'Done',
+                textDirection: TextDirection.ltr,
               ),
               onPressed: null,
               iconSize: 120,
@@ -185,33 +194,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _showImageButtonWidget1() {
-    Future<Widget> showImageBtnClicked() async {
-      bool isTrue = await ApiService.getOutputImage();
-      print('IsTrue');
-      print(isTrue.toString());
+  Future<Widget> showImageBtnClicked() async {
+    bool isTrue = await ApiService.getOutputImage();
+    print('IsTrue');
+    print(isTrue.toString());
 
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          // Add 20 lines from here...
-          builder: (BuildContext context) {
-            return ShowImagePage(context, _image);
-          },
-        ),
-      );
-    }
-
-    return Opacity(
-        opacity: _image == null ? 0.0 : 1.0,
-        // child: Container(
-        child: IconButton(
-            icon: Icon(
-              Icons.remove_red_eye,
-              color: Colors.white70,
-            ),
-            iconSize: 50,
-            onPressed: showImageBtnClicked));
-    // );
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          return ShowImagePage(context, _image);
+        },
+      ),
+    );
   }
 
   Widget _textWidget(text1, text2) {
@@ -233,74 +227,73 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              colorFilter: new ColorFilter.mode(
-                  Colors.black.withAlpha(100), BlendMode.darken),
-              image: AssetImage("assets/images/11.png"),
-              fit: BoxFit.cover)),
-      child: new BackdropFilter(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                colorFilter: new ColorFilter.mode(
+                    Colors.black.withAlpha(100), BlendMode.darken),
+                image: AssetImage("assets/images/11.png"),
+                fit: BoxFit.cover)),
+        child: new BackdropFilter(
           filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Column(
-              children: <Widget>[
-                Expanded(flex: 1, child: Container()),
-                Expanded(
-                  child: Text(
-                    globals.player,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 30,
+              backgroundColor: Colors.transparent,
+              body: Column(
+                children: <Widget>[
+                  Expanded(flex: 1, child: Container()),
+                  Expanded(
+                    child: Text(
+                      globals.player,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Text(
-                    'Round : ' + globals.round.toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 30,
+                  Expanded(
+                    child: Text(
+                      'Round : ' + globals.round.toString(),
+                      textAlign: TextAlign.end,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
-                ),
-                _iconWidget(),
-                _textWidget('Take/Pick Shot Photo', 'Image Taken Successfully'),
-                _image == null
-                    ? _textWidget('Score : ' + previous_score.toString(), '')
-                    : _showImageButtonWidget1(),
-                _textWidget(
-                    '', 'Previous Score : ' + previous_score.toString()),
-                _textWidget('', 'New Shot : ' + new_shot.toString()),
-                Container(
-                  padding: EdgeInsets.only(left: 80, right: 80),
-                  child: Opacity(
-                    opacity: _image == null ? 0 : 1.0,
-                    child: Divider(
-                      color: Colors.white70,
-                      thickness: 2,
+                  _iconWidget(),
+                  _textWidget('Take/Pick Shot Photo', ''),
+                  _textWidget('Score : ' + previous_score.toString(),
+                      'Previous Score : ' + previous_score.toString()),
+                  Container(
+                    height: _isLoading == true ? 35 : 0,
+                    child: Opacity(
+                      opacity: _isLoading ? 1.0 : 0,
+                      child: CircularProgressIndicator(),
                     ),
                   ),
-                ),
-                _textWidget('', 'Total Score : ' + total_score.toString()),
-                //Expanded(flex: 1, child: Container()),
-                /*Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _showImageButtonWidget(),
-                    _nextButtonWidget(),
-                  ],
-                ),*/
-                // _showImageButtonWidget()
-                //Expanded(flex: 1, child: Container()),
-
-                _nextButtonWidget()
-              ],
-            ),
-            //floatingActionButton: FloatingActionButton(onPressed: null),
-          )),
-    );
+                  _textWidget('', 'New Shot : ' + new_shot.toString()),
+                  Container(
+                    padding: EdgeInsets.only(left: 80, right: 80),
+                    child: Opacity(
+                      opacity: _image == null ? 0 : 1.0,
+                      child: Divider(
+                        color: Colors.white70,
+                        thickness: 2,
+                      ),
+                    ),
+                  ),
+                  _textWidget('', 'Total Score : ' + total_score.toString()),
+                  _nextButtonWidget()
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                child: Icon(Icons.remove_red_eye),
+                backgroundColor: Colors.transparent,
+                onPressed: showImageBtnClicked,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: Colors.white)),
+              )),
+        ));
   }
 }

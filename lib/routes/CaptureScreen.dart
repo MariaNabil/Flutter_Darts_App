@@ -23,12 +23,19 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File _image;
+  bool _isLoading = false;
 
   Future getImage() async {
     //var image1 = await ImagePicker.pickImage(source: ImageSource.gallery);
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     globals.emptyDartboardImage = image;
+    setState(() {
+      _isLoading = true;
+    });
     bool done = await ApiService.postEmptyDartBoard(image);
+    setState(() {
+      _isLoading = true;
+    });
     print('DONE');
     print(done.toString());
     setState(() {
@@ -38,9 +45,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future pickImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    //var image = await ImagePicker.pickImage(source: ImageSource.camera);
     globals.emptyDartboardImage = image;
+    setState(() {
+      _isLoading = true;
+    });
     bool done = await ApiService.postEmptyDartBoard(image);
+    setState(() {
+      _isLoading = false;
+    });
     print('DONE');
     print(done.toString());
     setState(() {
@@ -162,6 +174,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             _iconWidget(),
             _textWidget(),
+            Opacity(
+              opacity: _isLoading ? 1.0 : 0,
+              child: CircularProgressIndicator(),
+            ),
             // RaisedButton(child: Text('Pick'), onPressed: pickImage),
             Expanded(
                 flex: 4,
