@@ -2,16 +2,16 @@
 
 A new Flutter project.
 
+Using Rest API, icons, widgets and buttons, global variables and Good UI .
+
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Flutter darts App Using Python API to detect the Darts Game Score .
 
-A few resources to get you started if this is your first Flutter project:
+1- It takes the players names and the required start score .
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+2- You must capture or pick from gallery a photo of the empty dartboard .
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# Flutter_Test" 
+3- With every round you should take or pick a photo of the dart to calculate the new score of the player .
+
+4- Finally when the score of any player reach 0 the game finishes and the winner is notified .
